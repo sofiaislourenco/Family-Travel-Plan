@@ -88,27 +88,36 @@ _last_geocode_time = [0]  # Use list to make it mutable in nested scope
 
 @st.cache_data(ttl=3600)  # Cache for 1 hour
 def _geocode_cached(location_name):
-    """Internal cached geocoding function."""
+    """Internal cached geocoding function with retry logic."""
+    import time
     # Use Nominatim (OpenStreetMap) - free and reliable
-    try:
-        geolocator = Nominatim(user_agent="family_travel_planner_app_v3", timeout=15)
-        location = geolocator.geocode(location_name)
-        if location:
-            return location.latitude, location.longitude
-        return None
-    except Exception as e:
-        print(f"Geocoding error for {location_name}: {str(e)}")
-        return None
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            geolocator = Nominatim(user_agent="family_travel_planner_streamlit_v4", timeout=20)
+            location = geolocator.geocode(location_name)
+            if location:
+                return location.latitude, location.longitude
+            return None
+        except Exception as e:
+            if attempt < max_retries - 1:
+                # Wait longer before retrying (exponential backoff)
+                wait_time = (attempt + 1) * 2
+                print(f"Geocoding error for {location_name}, retrying in {wait_time}s: {str(e)}")
+                time.sleep(wait_time)
+            else:
+                print(f"Geocoding error for {location_name} after {max_retries} attempts: {str(e)}")
+                return None
 
 def get_location_coordinates(location_name):
     """Get coordinates for a given location name with rate limiting."""
     import time
     
-    # Enforce rate limiting: wait at least 1.5 seconds between requests
+    # Enforce rate limiting: wait at least 2 seconds between requests (stricter for cloud deployment)
     current_time = time.time()
     time_since_last = current_time - _last_geocode_time[0]
-    if time_since_last < 1.5:
-        sleep_time = 1.5 - time_since_last
+    if time_since_last < 2.0:
+        sleep_time = 2.0 - time_since_last
         time.sleep(sleep_time)
     
     result = _geocode_cached(location_name)
