@@ -6,6 +6,7 @@ A beautiful and interactive web application to help you plan the perfect family 
 
 - 🗺️ **Interactive Map**: See all your destinations pinned on a map with different colors for each day
 - 🤖 **AI-Powered Recommendations**: Get personalized activity suggestions using Google Gemini AI
+- 🖼️ **Real Location Photos**: Each activity shows actual photos from Google Places API
 - 👨‍👩‍👧‍👦 **Family-Friendly**: Specify if you're traveling with kids and their ages for age-appropriate activities
 - 🎯 **Kids Challenges**: Fun scavenger hunts and challenges for kids at each activity when traveling with children
 - 📅 **Multi-Day Planning**: Plan trips from 1 to 30 days
@@ -14,8 +15,9 @@ A beautiful and interactive web application to help you plan the perfect family 
 ## Prerequisites
 
 - Python 3.7 or higher
-- Google Gemini API key (get one at https://aistudio.google.com/app/apikey)
-- Google Maps API key (get one at https://console.cloud.google.com/apis/credentials)
+- **Google Gemini API key** (required - get one at https://aistudio.google.com/app/apikey)
+- **Google Maps API key** (required - get one at https://console.cloud.google.com/apis/credentials)
+  - Enable both "Places API" and "Maps JavaScript API" for your key
 
 ## Installation
 
@@ -34,6 +36,10 @@ A beautiful and interactive web application to help you plan the perfect family 
    GEMINI_API_KEY=your_gemini_api_key_here
    GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
    ```
+   
+   **Important**: Make sure to enable these APIs in Google Cloud Console:
+   - Places API (for location photos and geocoding)
+   - Maps JavaScript API (for map display)
 
 ## Usage
 
@@ -52,7 +58,7 @@ A beautiful and interactive web application to help you plan the perfect family 
 4. **Generate your plan**: Click the "Generate Travel Plan" button
 
 5. **Explore your itinerary**:
-   - View the detailed day-by-day itinerary on the left
+   - View the detailed day-by-day itinerary on the left with real photos from Google Places
    - Interact with the map on the right to see all locations
    - Click on map markers to see activity details
 
@@ -69,6 +75,7 @@ A beautiful and interactive web application to help you plan the perfect family 
 
 - **Streamlit**: Web application framework
 - **Google Gemini AI**: AI-powered activity recommendations
+- **Google Places API**: Real photos of actual locations
 - **Google Maps**: Interactive map visualization
 - **Folium**: Map rendering library
 - **Geopy**: Location geocoding

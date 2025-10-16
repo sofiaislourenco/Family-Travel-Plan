@@ -8,6 +8,7 @@ import os
 import json
 from datetime import datetime
 from dotenv import load_dotenv
+import requests
 
 # Load environment variables from .env file
 load_dotenv()
@@ -114,6 +115,65 @@ def get_location_coordinates(location_name):
     _last_geocode_time[0] = time.time()
     return result
 
+@st.cache_data(ttl=3600)  # Cache images for 1 hour
+def get_location_image(location_name):
+    """Fetch a representative image for a location using Google Places API (New)."""
+    google_maps_key = os.getenv("GOOGLE_MAPS_API_KEY", "")
+    
+    if not google_maps_key:
+        print(f"⚠️ No Google Maps API key found for image: {location_name}")
+        return "https://via.placeholder.com/400x300.png?text=No+Image+Available"
+    
+    try:
+        # Use the NEW Places API (Text Search)
+        search_url = "https://places.googleapis.com/v1/places:searchText"
+        
+        headers = {
+            'Content-Type': 'application/json',
+            'X-Goog-Api-Key': google_maps_key,
+            'X-Goog-FieldMask': 'places.displayName,places.photos'
+        }
+        
+        body = {
+            'textQuery': location_name
+        }
+        
+        print(f"🖼️ Fetching image for: {location_name}")
+        response = requests.post(search_url, headers=headers, json=body, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            # Check if we found places with photos
+            if 'places' in data and len(data['places']) > 0:
+                place = data['places'][0]
+                place_name = place.get('displayName', {}).get('text', 'Unknown')
+                print(f"  ✓ Found place: {place_name}")
+                
+                if 'photos' in place and len(place['photos']) > 0:
+                    # Get the photo name (resource name)
+                    photo_name = place['photos'][0]['name']
+                    
+                    # Construct the photo URL using the new API format
+                    photo_url = f"https://places.googleapis.com/v1/{photo_name}/media?maxWidthPx=800&key={google_maps_key}"
+                    
+                    print(f"  ✓ Image URL created successfully")
+                    return photo_url
+                else:
+                    print(f"  ✗ No photos available for this place")
+            else:
+                print(f"  ✗ No place found")
+        else:
+            error_data = response.json() if response.content else {}
+            print(f"  ✗ API request failed with status {response.status_code}: {error_data.get('error', {}).get('message', 'Unknown error')}")
+        
+        # Fallback to placeholder if no image found
+        return "https://via.placeholder.com/400x300.png?text=No+Image+Available"
+        
+    except Exception as e:
+        print(f"  ✗ Error fetching image for {location_name}: {str(e)}")
+        return "https://via.placeholder.com/400x300.png?text=No+Image+Available"
+
 def generate_travel_plan(destination, num_days, with_kids, kids_ages):
     """Generate a travel plan using Google Gemini."""
     # Get API key from environment
@@ -156,6 +216,7 @@ IMPORTANT: For the "location" field - Keep it SIMPLE and SHORT for geocoding:
   * "Ouchy, Lausanne, Switzerland" (not "Promenade d'Ouchy")
   * "Jardin Botanique, Lausanne, Switzerland" (not "Musée et Jardins Botaniques Lausannois")
   * "Cathédrale de Lausanne, Lausanne, Switzerland" (French name, not "Lausanne Cathedral")
+  * "Lycabettus Hill, Athens, Greece" (not "Mount Lycabettus")
   * "Torre de Belém, Lisbon, Portugal" (short, well-known)
   * "Park Güell, Barcelona, Spain" (not "Parc Güell de Barcelona")
 - Examples BAD (too long/detailed):
@@ -163,6 +224,7 @@ IMPORTANT: For the "location" field - Keep it SIMPLE and SHORT for geocoding:
   * "Aquatis Aquarium-Vivarium Lausanne, Route de Berne 144, Lausanne, Switzerland" (too long!)
   * "Promenade d'Ouchy, Lausanne, Switzerland" (use just "Ouchy")
   * "Lausanne Cathedral, Lausanne, Switzerland" (use French: "Cathédrale de Lausanne")
+  * "Mount Lycabettus, Athens, Greece" (use "Lycabettus Hill")
   * "Tram 28, Lisbon, Portugal" (route, not a place)
 
 Please format the response as a JSON object with the following structure:
@@ -434,6 +496,14 @@ if 'travel_plan' in st.session_state:
                 with st.expander(f"**Day {day_num}**", expanded=True):
                     if 'activities' in day:
                         for idx, activity in enumerate(day['activities'], 1):
+                            # Create a mini-container for each activity with image
+                            activity_location = activity.get('location', '')
+                            
+                            # Fetch and display image
+                            if activity_location:
+                                image_url = get_location_image(activity_location)
+                                st.image(image_url, use_container_width=True)
+                            
                             st.markdown(f"**{idx}. {activity.get('name', 'Activity')}**")
                             st.markdown(f"*Duration: {activity.get('duration', 'N/A')}*")
                             st.markdown(f"{activity.get('description', '')}")
