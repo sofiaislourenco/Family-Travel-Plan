@@ -217,9 +217,10 @@ For each day, provide:
 IMPORTANT: For the "location" field - Keep it SIMPLE and SHORT for geocoding:
 - Format: "Landmark Name, City, Country" (3 parts ONLY)
 - Use SHORT, COMMONLY-KNOWN names (e.g., "Aquatis" not "Aquatis Aquarium-Vivarium Lausanne")
-- Use local language but PREFER SHORT VERSIONS over formal long names
-- AVOID: funiculars, cable cars, trams, trains, or other transport infrastructure - use the DESTINATION instead
-- Use WELL-KNOWN landmarks that are in maps databases
+- Use local language names (French for Luxembourg, Portuguese for Lisbon, etc.)
+- NEVER suggest transport: NO funiculars, cable cars, tourist trains, trams, buses, or any transportation
+- Instead of transport, suggest the actual DESTINATION or VIEWPOINT
+- Use WELL-KNOWN landmarks that exist in OpenStreetMap databases
 - NO street addresses, building numbers, postal codes, formal titles, or extra descriptions
 - Examples GOOD (short & simple):
   * "Sagrada Familia, Barcelona, Spain" (not "Basílica de la Sagrada Família")
@@ -227,6 +228,7 @@ IMPORTANT: For the "location" field - Keep it SIMPLE and SHORT for geocoding:
   * "Ouchy, Lausanne, Switzerland" (not "Promenade d'Ouchy")
   * "Jardin Botanique, Lausanne, Switzerland" (not "Musée et Jardins Botaniques Lausannois")
   * "Cathédrale de Lausanne, Lausanne, Switzerland" (French name, not "Lausanne Cathedral")
+  * "Basilique Saint-Willibrord, Echternach, Luxembourg" (French name, not "Abbey of Echternach")
   * "Lycabettus Hill, Athens, Greece" (not "Mount Lycabettus")
   * "Torre de Belém, Lisbon, Portugal" (short, well-known)
   * "Park Güell, Barcelona, Spain" (not "Parc Güell de Barcelona")
@@ -236,8 +238,10 @@ IMPORTANT: For the "location" field - Keep it SIMPLE and SHORT for geocoding:
   * "Promenade d'Ouchy, Lausanne, Switzerland" (use just "Ouchy")
   * "Lausanne Cathedral, Lausanne, Switzerland" (use French: "Cathédrale de Lausanne")
   * "Mount Lycabettus, Athens, Greece" (use "Lycabettus Hill")
-  * "Funiculaire de Vianden, Vianden, Luxembourg" (infrastructure, use "Vianden Castle" instead)
-  * "Tram 28, Lisbon, Portugal" (transport, not a place - suggest the destination instead)
+  * "Abbey of Echternach, Echternach, Luxembourg" (use French: "Basilique Saint-Willibrord")
+  * "Pétrusse Express, Luxembourg, Luxembourg" (TRANSPORT - suggest "Place de la Constitution" instead)
+  * "Funiculaire de Vianden, Vianden, Luxembourg" (TRANSPORT - use "Vianden Castle" instead)
+  * "Tram 28, Lisbon, Portugal" (TRANSPORT - suggest the destination viewpoint instead)
 
 Please format the response as a JSON object with the following structure:
 {{
