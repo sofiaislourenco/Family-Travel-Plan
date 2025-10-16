@@ -218,6 +218,8 @@ IMPORTANT: For the "location" field - Keep it SIMPLE and SHORT for geocoding:
 - Format: "Landmark Name, City, Country" (3 parts ONLY)
 - Use SHORT, COMMONLY-KNOWN names (e.g., "Aquatis" not "Aquatis Aquarium-Vivarium Lausanne")
 - Use local language but PREFER SHORT VERSIONS over formal long names
+- AVOID: funiculars, cable cars, trams, trains, or other transport infrastructure - use the DESTINATION instead
+- Use WELL-KNOWN landmarks that are in maps databases
 - NO street addresses, building numbers, postal codes, formal titles, or extra descriptions
 - Examples GOOD (short & simple):
   * "Sagrada Familia, Barcelona, Spain" (not "Basílica de la Sagrada Família")
@@ -234,7 +236,8 @@ IMPORTANT: For the "location" field - Keep it SIMPLE and SHORT for geocoding:
   * "Promenade d'Ouchy, Lausanne, Switzerland" (use just "Ouchy")
   * "Lausanne Cathedral, Lausanne, Switzerland" (use French: "Cathédrale de Lausanne")
   * "Mount Lycabettus, Athens, Greece" (use "Lycabettus Hill")
-  * "Tram 28, Lisbon, Portugal" (route, not a place)
+  * "Funiculaire de Vianden, Vianden, Luxembourg" (infrastructure, use "Vianden Castle" instead)
+  * "Tram 28, Lisbon, Portugal" (transport, not a place - suggest the destination instead)
 
 Please format the response as a JSON object with the following structure:
 {{
